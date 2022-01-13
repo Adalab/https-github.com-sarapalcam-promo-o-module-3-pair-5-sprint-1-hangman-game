@@ -3,13 +3,27 @@ import '../styles/App.scss';
 import { useState } from 'react';
 
 function App() {
-
   const [numberOfErrors, setNumberOfErrors] = useState(0);
-
+  const [lastLetter, setLastLetter] = useState('');
+  const solution = 'katakroker';
+  const correctLetter = [];
+  const errorLetter = [];
   const handleClickBtn = () => {
     setNumberOfErrors(numberOfErrors + 1);
-  }
-
+  };
+  const handleChangeLetter = (event) => {
+    setLastLetter(event.target.value);
+    if (solution.includes(event.target.value) /*&& event.target.value !== ''*/) {
+      correctLetter.push(event.target.value);
+    } else{
+      errorLetter.push(event.target.value);
+    }
+    console.log(correctLetter);
+    console.log(errorLetter);
+  };
+  const handleSubmit = (event) => {
+    event.preventDefault();
+  };
   return (
     <div className="page">
       <header>
@@ -42,8 +56,10 @@ function App() {
               <li className="letter">x</li>
             </ul>
           </div>
-          <form className="form">
-            <label className="title" htmlFor="last-letter">Escribe una letra:</label>
+          <form className="form" onSubmit={handleSubmit}>
+            <label className="title" htmlFor="last-letter">
+              Escribe una letra:
+            </label>
             <input
               autoComplete="off"
               className="form__input"
@@ -51,6 +67,8 @@ function App() {
               type="text"
               name="last-letter"
               id="last-letter"
+              onChange={handleChangeLetter}
+              value={lastLetter}
             />
           </form>
         </section>
