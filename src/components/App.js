@@ -3,27 +3,41 @@ import '../styles/App.scss';
 import { useState } from 'react';
 
 function App() {
-  const [numberOfErrors, setNumberOfErrors] = useState(0);
   const [lastLetter, setLastLetter] = useState('');
-  const solution = 'katakroker';
-  const correctLetter = [];
-  const errorLetter = [];
-  const handleClickBtn = () => {
-    setNumberOfErrors(numberOfErrors + 1);
-  };
+  const [userLetter, setUserLetters] = useState([]);
+  const [word, setWord] = useState('katakroker');
+  // const correctLetter = [];
+  // const errorLetter = [];
+
+  // const handleClickBtn = () => {
+  //   setNumberOfErrors(numberOfErrors + 1);
+  // };
+
   const handleChangeLetter = (event) => {
-    setLastLetter(event.target.value);
-    if (solution.includes(event.target.value) /*&& event.target.value !== ''*/) {
-      correctLetter.push(event.target.value);
-    } else{
-      errorLetter.push(event.target.value);
-    }
-    console.log(correctLetter);
-    console.log(errorLetter);
+    
+      setLastLetter(event.target.value);
+    
+    const newLetter = [...userLetter, lastLetter];
+    setUserLetters(newLetter)
   };
+
   const handleSubmit = (event) => {
     event.preventDefault();
   };
+
+  const renderSolutionLetters = () => {
+    const wordLetters = word.split('');
+    let letter = '';
+    // if (word.includes(lastLetter)){
+    //   // const filteredWord = wordLetters.filter(eachLetter => eachLetter === lastLetter);
+    //   // console.log(filteredWord);
+    //   return <li className="letter">{letter}</li>
+    // } else {
+    //   return <li className="letter"></li>
+    // };
+    return wordLetters.map( (eachLetter, index) => <li key={index} className="letter">{letter}</li>)
+  }
+
   return (
     <div className="page">
       <header>
@@ -34,26 +48,17 @@ function App() {
           <div className="solution">
             <h2 className="title">Solución:</h2>
             <ul className="letters">
-              <li className="letter">k</li>
-              <li className="letter">a</li>
-              <li className="letter"></li>
-              <li className="letter">a</li>
-              <li className="letter">k</li>
-              <li className="letter">r</li>
-              <li className="letter"></li>
-              <li className="letter">k</li>
-              <li className="letter">e</li>
-              <li className="letter">r</li>
+              {renderSolutionLetters()}
             </ul>
           </div>
           <div className="error">
             <h2 className="title">Letras falladas:</h2>
             <ul className="letters">
-              <li className="letter">f</li>
+              {/* <li className="letter">f</li>
               <li className="letter">q</li>
               <li className="letter">h</li>
               <li className="letter">p</li>
-              <li className="letter">x</li>
+              <li className="letter">x</li> */}
             </ul>
           </div>
           <form className="form" onSubmit={handleSubmit}>
@@ -72,7 +77,7 @@ function App() {
             />
           </form>
         </section>
-        <section className={`dummy error-${numberOfErrors}`}>
+        <section className="dummy error-0"> {/* className={`dummy error-${numberOfErrors}` */}
           <span className="error-13 eye"></span>
           <span className="error-12 eye"></span>
           <span className="error-11 line"></span>
@@ -86,7 +91,7 @@ function App() {
           <span className="error-3 line"></span>
           <span className="error-2 line"></span>
           <span className="error-1 line"></span>
-          <button onClick={handleClickBtn}>Incrementar</button>
+          {/* <button onClick={handleClickBtn}>Incrementar</button> */}
         </section>
       </main>
     </div>
