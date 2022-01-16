@@ -3,39 +3,67 @@ import '../styles/App.scss';
 import { useState } from 'react';
 
 function App() {
+
   const [lastLetter, setLastLetter] = useState('');
   const [userLetter, setUserLetters] = useState([]);
   const [word, setWord] = useState('katakroker');
-  // const correctLetter = [];
-  // const errorLetter = [];
 
-  // const handleClickBtn = () => {
-  //   setNumberOfErrors(numberOfErrors + 1);
-  // };
-
-  const handleChangeLetter = (event) => {
-    
-      setLastLetter(event.target.value);
-    
-    const newLetter = [...userLetter, lastLetter];
-    setUserLetters(newLetter)
-  };
+  const wordLetters = word.split('');
 
   const handleSubmit = (event) => {
     event.preventDefault();
   };
 
+  const handleChangeLetter = (event) => {
+    const regex = /^[a-zA-ZáäéëíïóöúüÁÄÉËÍÏÓÖÚÜñÑ]?$/;
+    if (event.target.value.match(regex) ){
+      setLastLetter(event.target.value);
+    }
+    if (lastLetter !== ''){
+      const newLetter = [...userLetter, lastLetter];
+      setUserLetters(newLetter)
+    }
+  };
+
+  const restartGame = () => {
+    setLastLetter('');
+    setUserLetters([]);
+  }
+
+  const endGame = () => {
+    const correctLetters = wordLetters.filter(eachLetter => userLetter.includes(eachLetter));
+    const errorLetters = userLetter.filter(eachLetter => !wordLetters.includes(eachLetter));
+    if (correctLetters.length === wordLetters.length){
+      return <section className="end"><p className="end__message">¡Has ganado!</p><button className="end__btn" onClick={restartGame}>Reiniciar juego</button></section>
+    }
+    if (errorLetters.length === 13){
+      return <section className="end"><p className="end__message">¡Has perdido!</p><button className="end__btn" onClick={restartGame}>Reiniciar juego</button></section>
+    } 
+  }
+
   const renderSolutionLetters = () => {
-    const wordLetters = word.split('');
     let letter = '';
-    // if (word.includes(lastLetter)){
-    //   // const filteredWord = wordLetters.filter(eachLetter => eachLetter === lastLetter);
-    //   // console.log(filteredWord);
-    //   return <li className="letter">{letter}</li>
-    // } else {
-    //   return <li className="letter"></li>
-    // };
-    return wordLetters.map( (eachLetter, index) => <li key={index} className="letter">{letter}</li>)
+    return wordLetters.map( (eachLetter, index) => {
+      if (userLetter.includes(eachLetter)) {
+        return <li key={index} className="letter">{eachLetter}</li>
+      } else {
+        return <li key={index} className="letter">{letter}</li>
+      }
+    } )
+  }
+
+  const renderErrorLettters = () => {
+    const errorLetters = userLetter.filter(eachLetter => !wordLetters.includes(eachLetter));
+    return errorLetters.map( (eachLetter, index) => 
+      <li key={index} className="letter">{eachLetter}</li>
+    )
+  }
+
+  const calculateErorNumber = () => {
+    const errorLetters = userLetter.filter(eachLetter => !wordLetters.includes(eachLetter));
+    if (errorLetters.length <= 13){
+      return errorLetters.length;
+    }
   }
 
   return (
@@ -54,11 +82,7 @@ function App() {
           <div className="error">
             <h2 className="title">Letras falladas:</h2>
             <ul className="letters">
-              {/* <li className="letter">f</li>
-              <li className="letter">q</li>
-              <li className="letter">h</li>
-              <li className="letter">p</li>
-              <li className="letter">x</li> */}
+              {renderErrorLettters()}
             </ul>
           </div>
           <form className="form" onSubmit={handleSubmit}>
@@ -77,7 +101,8 @@ function App() {
             />
           </form>
         </section>
-        <section className="dummy error-0"> {/* className={`dummy error-${numberOfErrors}` */}
+        <div className="end__container">
+        <section className={`dummy error-${calculateErorNumber()}`}>
           <span className="error-13 eye"></span>
           <span className="error-12 eye"></span>
           <span className="error-11 line"></span>
@@ -91,8 +116,9 @@ function App() {
           <span className="error-3 line"></span>
           <span className="error-2 line"></span>
           <span className="error-1 line"></span>
-          {/* <button onClick={handleClickBtn}>Incrementar</button> */}
         </section>
+        {endGame()}
+        </div>
       </main>
     </div>
   );
