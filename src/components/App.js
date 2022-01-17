@@ -14,11 +14,13 @@ function App() {
    
   useEffect ( ()=> {
     object.getWordFromApi()
-    
     .then(dataFromApi  => setWord(dataFromApi.body.Word)) ;
-   
   }, []);
   
+  const callToApi = () => {
+    object.getWordFromApi()
+    .then(dataFromApi  => setWord(dataFromApi.body.Word))
+  };
 
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -39,6 +41,7 @@ function App() {
   const restartGame = () => {
     setLastLetter('');
     setUserLetters([]);
+    callToApi();
   }
 
   const endGame = () => {
@@ -49,7 +52,7 @@ function App() {
       return <section className="end"><p className="end__message">¡Has ganado!</p><button className="end__btn" onClick={restartGame}>Reiniciar juego</button></section>
     }
     if (errorLetters.length === 13){
-      return <section className="end"><p className="end__message">¡Has perdido!</p><button className="end__btn" onClick={restartGame}>Reiniciar juego</button></section>
+      return <section className="end"><p className="end__message">¡Has perdido! La solución era {word}</p><button className="end__btn" onClick={restartGame}>Volver a jugar</button></section>
     } 
   }
 
