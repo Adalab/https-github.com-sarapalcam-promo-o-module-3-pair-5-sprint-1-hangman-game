@@ -1,14 +1,24 @@
 import '../styles/index.scss';
 import '../styles/App.scss';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import object from '../services/fetch'
+
 
 function App() {
 
   const [lastLetter, setLastLetter] = useState('');
   const [userLetter, setUserLetters] = useState([]);
-  const [word, setWord] = useState('katakroker');
-
-  const wordLetters = word.split('');
+  const [word, setWord] = useState('');
+   
+ 
+   
+  useEffect ( ()=> {
+    object.getWordFromApi()
+    
+    .then(dataFromApi  => setWord(dataFromApi.body.Word)) ;
+   
+  }, []);
+  
 
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -18,11 +28,12 @@ function App() {
     const regex = /^[a-zA-ZáäéëíïóöúüÁÄÉËÍÏÓÖÚÜñÑ]?$/;
     if (event.target.value.match(regex) ){
       setLastLetter(event.target.value);
+      if (lastLetter !== ''){
+        const newLetter = [...userLetter, lastLetter];
+        setUserLetters(newLetter)
+      }
     }
-    if (lastLetter !== ''){
-      const newLetter = [...userLetter, lastLetter];
-      setUserLetters(newLetter)
-    }
+    
   };
 
   const restartGame = () => {
@@ -31,6 +42,7 @@ function App() {
   }
 
   const endGame = () => {
+    const wordLetters = word.split('');
     const correctLetters = wordLetters.filter(eachLetter => userLetter.includes(eachLetter));
     const errorLetters = userLetter.filter(eachLetter => !wordLetters.includes(eachLetter));
     if (correctLetters.length === wordLetters.length){
@@ -43,6 +55,7 @@ function App() {
 
   const renderSolutionLetters = () => {
     let letter = '';
+    const wordLetters = word.split('');
     return wordLetters.map( (eachLetter, index) => {
       if (userLetter.includes(eachLetter)) {
         return <li key={index} className="letter">{eachLetter}</li>
@@ -53,6 +66,7 @@ function App() {
   }
 
   const renderErrorLettters = () => {
+    const wordLetters = word.split('');
     const errorLetters = userLetter.filter(eachLetter => !wordLetters.includes(eachLetter));
     return errorLetters.map( (eachLetter, index) => 
       <li key={index} className="letter">{eachLetter}</li>
@@ -60,6 +74,7 @@ function App() {
   }
 
   const calculateErorNumber = () => {
+    const wordLetters = word.split('');
     const errorLetters = userLetter.filter(eachLetter => !wordLetters.includes(eachLetter));
     if (errorLetters.length <= 13){
       return errorLetters.length;
